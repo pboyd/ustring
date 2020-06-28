@@ -30,4 +30,22 @@ rune utf8_decode(byte *buf, size_t *size);
  */
 size_t utf8_len(byte b);
 
+/**
+ * \brief utf8_rune_len returns the number of bytes needed to store the rune in UTF-8.
+ *
+ * If the rune is not a valid Unicode code point value (i.e. less than zero or
+ * greater than or equal to 0x10ffff), a 0 length is returned.
+ */
+size_t utf8_rune_len(rune r);
+
+/**
+ * \brief utf8_encode encodes the rune r in UTF-8 and copies the value to buf.
+ *
+ * buf should have enough space to hold the encoded text, which is at most 4
+ * bytes. Use \ref utf8_rune_len for a precise size.
+ *
+ * Returns the number of bytes set in the buffer.
+ */
+size_t utf8_encode(byte *buf, rune r);
+
 #endif

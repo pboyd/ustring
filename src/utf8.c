@@ -7,6 +7,11 @@ rune utf8_decode(byte *buf, size_t *size) {
     int i;
     byte b;
 
+    if (size == NULL) {
+        size_t dummy;
+        size = &dummy;
+    }
+
     if (*buf == 0) {
         *size = 1;
         return 0;
@@ -63,6 +68,64 @@ size_t utf8_len(byte b) {
         if ((b&mask) == 0) {
             return i;
         }
+    }
+
+    return 0;
+}
+
+size_t utf8_rune_len(rune r) {
+    if (r < 0) {
+        return 0;
+    }
+
+    if (r < 0x80) {
+        return 1;
+    }
+
+    if (r < 0x800) {
+        return 2;
+    }
+
+    if (r < 0xffff) {
+        return 3;
+    }
+
+    if (r < 0x10ffff) {
+        return 4;
+    }
+
+    return 0;
+}
+
+size_t utf8_encode(byte *buf, rune r) {
+    if (r < 0) {
+        return 0;
+    }
+
+    if (r < 0x80) {
+        buf[0] = (byte)r;
+        return 1;
+    }
+
+    if (r < 0x800) {
+        buf[0] = 0x80 | 0x40 | (byte)(r>>6);
+        buf[1] = 0x80 | (byte)(r&0x3f);
+        return 2;
+    }
+
+    if (r < 0xffff) {
+        buf[0] = 0x80 | 0x40 | 0x20 | (byte)(r>>12);
+        buf[1] = 0x80 | (byte)(r>>6&0x3f);
+        buf[2] = 0x80 | (byte)(r&0x3f);
+        return 3;
+    }
+
+    if (r < 0x10ffff) {
+        buf[0] = 0x80 | 0x40 | 0x20 | 0x10 | (byte)(r>>18);
+        buf[1] = 0x80 | (byte)(r>>12&0x3f);
+        buf[2] = 0x80 | (byte)(r>>6&0x3f);
+        buf[3] = 0x80 | (byte)(r&0x3f);
+        return 4;
     }
 
     return 0;
