@@ -13,8 +13,11 @@ lib/libustring.a : src/utf8.o
 	$(AR) rcs $@ src/utf8.o
 
 clean:
-	rm lib/libustring.a src/*.o
+	rm lib/libustring.a src/*.o ; rm -rf doc
 
 test: lib/libustring.a
 	$(CC) $(CFLAGS) src/test/*.c -o ustring.test -Llib -lustring && \
 		./ustring.test ; rm ustring.test
+
+doc: include/ustring.h
+	doxygen
