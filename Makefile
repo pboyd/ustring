@@ -9,8 +9,11 @@ all: lib/libustring.a
 src/utf8.o: src/utf8.c include/ustring.h
 	$(CC) $(CFLAGS) -c src/utf8.c -o $@
 
-lib/libustring.a : src/utf8.o
-	$(AR) rcs $@ src/utf8.o
+src/utf16.o: src/utf16.c include/ustring.h
+	$(CC) $(CFLAGS) -c src/utf16.c -o $@
+
+lib/libustring.a : src/utf8.o src/utf16.o
+	$(AR) rcs $@ src/utf8.o src/utf16.o
 
 clean:
 	rm lib/libustring.a src/*.o ; rm -rf doc

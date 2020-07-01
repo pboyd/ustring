@@ -1,7 +1,5 @@
 #include <ustring.h>
 
-#define UNICODE_REPLACEMENT 0xFFFD
-
 rune utf8_decode(byte *buf, size_t *size) {
     rune code;
     int i;
@@ -90,7 +88,7 @@ size_t utf8_rune_len(rune r) {
         return 3;
     }
 
-    if (r < 0x10ffff) {
+    if (r < UNICODE_MAX) {
         return 4;
     }
 
@@ -120,7 +118,7 @@ size_t utf8_encode(byte *buf, rune r) {
         return 3;
     }
 
-    if (r < 0x10ffff) {
+    if (r < UNICODE_MAX) {
         buf[0] = 0x80 | 0x40 | 0x20 | 0x10 | (byte)(r>>18);
         buf[1] = 0x80 | (byte)(r>>12&0x3f);
         buf[2] = 0x80 | (byte)(r>>6&0x3f);
