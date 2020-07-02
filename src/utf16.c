@@ -7,15 +7,15 @@
 #define IS_HIGH_SURROGATE(value) ((value & SURROGATE_MASK) == HIGH_SURROGATE)
 #define IS_LOW_SURROGATE(value) ((value & SURROGATE_MASK) == LOW_SURROGATE)
 
-rune read_word(byte *buf, enum byte_order byte_order) {
+uint32_t read_word(uint8_t *buf, enum byte_order byte_order) {
     if (byte_order == big_endian) {
-        return (rune)((buf[0] << 8) | buf[1]);
+        return (uint32_t)((buf[0] << 8) | buf[1]);
     }
 
-    return (rune)((buf[1] << 8) | buf[0]);
+    return (uint32_t)((buf[1] << 8) | buf[0]);
 }
 
-void write_word(byte *buf, enum byte_order byte_order, rune r) {
+void write_word(uint8_t *buf, enum byte_order byte_order, uint32_t r) {
     if (byte_order == big_endian) {
         buf[0] = r >> 8;
         buf[1] = r;
@@ -25,8 +25,8 @@ void write_word(byte *buf, enum byte_order byte_order, rune r) {
     }
 }
 
-rune utf16_decode(byte *buf,  enum byte_order byte_order, size_t *size) {
-    rune w1 = read_word(buf, byte_order);
+uint32_t utf16_decode(uint8_t *buf,  enum byte_order byte_order, size_t *size) {
+    uint32_t w1 = read_word(buf, byte_order);
 
     if (size != NULL) *size = 2;
 
@@ -38,31 +38,31 @@ rune utf16_decode(byte *buf,  enum byte_order byte_order, size_t *size) {
         return w1;
     }
 
-    rune w2 = read_word(buf+2, byte_order);
+    uint32_t w2 = read_word(buf+2, byte_order);
     if (size != NULL) *size = 4;
 
     if (!IS_LOW_SURROGATE(w2)) {
         return UNICODE_REPLACEMENT;
     }
 
-    rune value = (w1&0x3ff) << 10;
+    uint32_t value = (w1&0x3ff) << 10;
     value |= (w2&0x3ff);
     value |= 0x10000;
 
     return value;
 }
 
-size_t utf16_rune_len(rune r) {
-    if (r < 0 || r > UNICODE_MAX) {
+size_t utf16_rune_len(uint32_t r) {
+    if (r > UNICODE_MAX) {
         return 0;
     }
 
     return r < 0x10000 ? 2 : 4;
 }
 
-int utf16_cmp(byte *s1, byte *s2, enum byte_order byte_order, size_t n) {
+int utf16_cmp(uint8_t *s1, uint8_t *s2, enum byte_order byte_order, size_t n) {
     int i = 0;
-    rune r1, r2;
+    uint32_t r1, r2;
     size_t step;
 
     if (n % 2 != 0) {
@@ -96,8 +96,8 @@ int utf16_cmp(byte *s1, byte *s2, enum byte_order byte_order, size_t n) {
     return 0;
 }
 
-size_t utf16_encode(byte *buf, enum byte_order byte_order, rune r) {
-    if (r < 0 || r > UNICODE_MAX) {
+size_t utf16_encode(uint8_t *buf, enum byte_order byte_order, uint32_t r) {
+    if (r > UNICODE_MAX) {
         r = UNICODE_REPLACEMENT;
     }
 

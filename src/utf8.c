@@ -1,9 +1,9 @@
 #include <ustring.h>
 
-rune utf8_decode(byte *buf, size_t *size) {
-    rune code;
+uint32_t utf8_decode(uint8_t *buf, size_t *size) {
+    uint32_t code;
     int i;
-    byte b;
+    uint8_t b;
 
     if (size == NULL) {
         size_t dummy;
@@ -17,7 +17,7 @@ rune utf8_decode(byte *buf, size_t *size) {
 
     *size = utf8_len(*buf);
     if (*size == 1) {
-        return (rune)*buf;
+        return (uint32_t)*buf;
     }
 
     code = (*buf & 0x7f >> *size);
@@ -42,7 +42,7 @@ rune utf8_decode(byte *buf, size_t *size) {
     return code;
 }
 
-size_t utf8_len(byte b) {
+size_t utf8_len(uint8_t b) {
     // The first 0 bit indicates the length:
     // 
     // 0b0xxxxxxx is 1 byte
@@ -50,7 +50,7 @@ size_t utf8_len(byte b) {
     // 0b110xxxxx is 2 bytes
     // 0b1110xxxx is 3 bytes
     // 0b11110xxx is 4 bytes
-    byte mask = 0x80;
+    uint8_t mask = 0x80;
     if ((b&mask) == 0) {
         return 1;
     }
@@ -71,11 +71,7 @@ size_t utf8_len(byte b) {
     return 0;
 }
 
-size_t utf8_rune_len(rune r) {
-    if (r < 0) {
-        return 0;
-    }
-
+size_t utf8_rune_len(uint32_t r) {
     if (r < 0x80) {
         return 1;
     }
@@ -95,34 +91,30 @@ size_t utf8_rune_len(rune r) {
     return 0;
 }
 
-size_t utf8_encode(byte *buf, rune r) {
-    if (r < 0) {
-        return 0;
-    }
-
+size_t utf8_encode(uint8_t *buf, uint32_t r) {
     if (r < 0x80) {
-        buf[0] = (byte)r;
+        buf[0] = (uint8_t)r;
         return 1;
     }
 
     if (r < 0x800) {
-        buf[0] = 0x80 | 0x40 | (byte)(r>>6);
-        buf[1] = 0x80 | (byte)(r&0x3f);
+        buf[0] = 0x80 | 0x40 | (uint8_t)(r>>6);
+        buf[1] = 0x80 | (uint8_t)(r&0x3f);
         return 2;
     }
 
     if (r < 0xffff) {
-        buf[0] = 0x80 | 0x40 | 0x20 | (byte)(r>>12);
-        buf[1] = 0x80 | (byte)(r>>6&0x3f);
-        buf[2] = 0x80 | (byte)(r&0x3f);
+        buf[0] = 0x80 | 0x40 | 0x20 | (uint8_t)(r>>12);
+        buf[1] = 0x80 | (uint8_t)(r>>6&0x3f);
+        buf[2] = 0x80 | (uint8_t)(r&0x3f);
         return 3;
     }
 
     if (r < UNICODE_MAX) {
-        buf[0] = 0x80 | 0x40 | 0x20 | 0x10 | (byte)(r>>18);
-        buf[1] = 0x80 | (byte)(r>>12&0x3f);
-        buf[2] = 0x80 | (byte)(r>>6&0x3f);
-        buf[3] = 0x80 | (byte)(r&0x3f);
+        buf[0] = 0x80 | 0x40 | 0x20 | 0x10 | (uint8_t)(r>>18);
+        buf[1] = 0x80 | (uint8_t)(r>>12&0x3f);
+        buf[2] = 0x80 | (uint8_t)(r>>6&0x3f);
+        buf[3] = 0x80 | (uint8_t)(r&0x3f);
         return 4;
     }
 

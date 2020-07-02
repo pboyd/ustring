@@ -7,9 +7,9 @@
 #define copy_string(dest, str, len) for (int i = 0; i < len; i++) dest[i] = str[i]
 
 void test_utf16_decode(CuTest *tc) {
-    rune actual;
+    uint32_t actual;
     size_t size;
-    byte buf[6];
+    uint8_t buf[6];
 
     copy_string(buf, "\x00\x61", 2);
     actual = utf16_decode(buf, big_endian, &size);
@@ -56,8 +56,8 @@ void test_utf16_rune_len(CuTest *tc) {
 }
 
 void test_utf16_encode(CuTest *tc) {
-    byte buf[4];
-    byte expected[4];
+    uint8_t buf[4];
+    uint8_t expected[4];
     size_t size;
 
     size = utf16_encode(&buf[0], big_endian, 0x61);

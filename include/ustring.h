@@ -2,18 +2,10 @@
 #define USTRING_H 1
 
 #include <stddef.h>
+#include <stdint.h>
 
 #define UNICODE_MAX 0x10FFFF
 #define UNICODE_REPLACEMENT 0xFFFD
-
-/** rune is a type large enough to hold any Unicode code point */
-typedef int rune;
-
-/** byte is a type with 8 bits */
-typedef unsigned char byte;
-
-/** word is a type with 16 bits */
-typedef unsigned short int word;
 
 enum byte_order {
     big_endian,
@@ -31,7 +23,7 @@ enum byte_order {
  * \param buf the buffer to read from
  * \param size if not NULL, the number of bytes used by the code point will be returned.
  */
-rune utf8_decode(byte *buf, size_t *size);
+uint32_t utf8_decode(uint8_t *buf, size_t *size);
 
 /**
  * utf8_len returns the number of bytes in a UTF-8 encoded code point according to the first byte of the encoded text.
@@ -40,7 +32,7 @@ rune utf8_decode(byte *buf, size_t *size);
  *
  * \param b the first byte of the encoded text.
  */
-size_t utf8_len(byte b);
+size_t utf8_len(uint8_t b);
 
 /**
  * utf8_rune_len returns the number of bytes needed to store the rune in UTF-8.
@@ -48,17 +40,17 @@ size_t utf8_len(byte b);
  * If the rune is not a valid Unicode code point value (i.e. less than zero or
  * greater than or equal to 0x10ffff), a 0 length is returned.
  */
-size_t utf8_rune_len(rune r);
+size_t utf8_rune_len(uint32_t rune);
 
 /**
- * utf8_encode encodes the rune r in UTF-8 and copies the value to buf.
+ * utf8_encode encodes the rune in UTF-8 and copies the value to buf.
  *
  * buf should have enough space to hold the encoded text, which is at most 4
  * bytes. Use \ref utf8_rune_len for a precise size.
  *
  * Returns the number of bytes set in the buffer.
  */
-size_t utf8_encode(byte *buf, rune r);
+size_t utf8_encode(uint8_t *buf, uint32_t rune);
 
 /**
  * utf16_decode returns the value of the first UTF-16 code point in buf.
@@ -70,7 +62,7 @@ size_t utf8_encode(byte *buf, rune r);
  * \param byte_order either big_endian or little_endian
  * \param size if not NULL, the number of bytes used by the code point will be returned.
  */
-rune utf16_decode(byte *buf, enum byte_order byte_order, size_t *size);
+uint32_t utf16_decode(uint8_t *buf, enum byte_order byte_order, size_t *size);
 
 /**
  * utf16_rune_len returns the number of bytes needed to store the rune in UTF-16.
@@ -78,17 +70,17 @@ rune utf16_decode(byte *buf, enum byte_order byte_order, size_t *size);
  * If the rune is not a valid Unicode code point value (i.e. less than zero or
  * greater than or equal to 0x10ffff), a 0 length is returned.
  */
-size_t utf16_rune_len(rune r);
+size_t utf16_rune_len(uint32_t rune);
 
 /**
- * utf16_encode encodes the rune r in UTF-16 and copies the value to buf.
+ * utf16_encode encodes the rune in UTF-16 and copies the value to buf.
  *
  * buf should have enough space to hold the encoded text, which is at most 4
  * bytes. Use \ref utf16_rune_len for a precise size.
  *
  * Returns the number of bytes set in the buffer.
  */
-size_t utf16_encode(byte *buf, enum byte_order byte_order, rune r);
+size_t utf16_encode(uint8_t *buf, enum byte_order byte_order, uint32_t rune);
 
 /** utf16_cmp compares two UTF-16 byte strings.
  *
@@ -105,6 +97,6 @@ size_t utf16_encode(byte *buf, enum byte_order byte_order, rune r);
  * \param byte_order either big_endian or little_endian
  * \param n maximum number of bytes (not code points, not words) to examine. If n < 0 it will scan until a NULL word.
  */
-int utf16_cmp(byte *s1, byte *s2, enum byte_order byte_order, size_t n);
+int utf16_cmp(uint8_t *s1, uint8_t *s2, enum byte_order byte_order, size_t n);
 
 #endif

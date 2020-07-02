@@ -5,9 +5,9 @@
 #define copy_string(dest, str, len) for (int i = 0; i < len; i++) dest[i] = str[i]
 
 void test_utf8_decode(CuTest *tc) {
-    rune actual;
+    uint32_t actual;
     size_t size;
-    byte buf[5];
+    uint8_t buf[5];
 
     copy_string(buf, "", 1);
     actual = utf8_decode(buf, &size);
@@ -49,11 +49,11 @@ void test_utf8_decode(CuTest *tc) {
 }
 
 void test_utf8_decode_string(CuTest *tc) {
-    rune actual[13];
-    rune expected[13] = {'s', 'o', 'm', 'e', ' ', 's', 't', 'r', 'i', 'n', 'g', 0x1F387, 0};
+    uint32_t actual[13];
+    uint32_t expected[13] = {'s', 'o', 'm', 'e', ' ', 's', 't', 'r', 'i', 'n', 'g', 0x1F387, 0};
 
-    byte string[] = {"some string\xf0\x9f\x8e\x87"};
-    byte *p = &string[0];
+    uint8_t string[] = {"some string\xf0\x9f\x8e\x87"};
+    uint8_t *p = &string[0];
 
     size_t size;
     for (int i = 0; ; i++) {
@@ -90,7 +90,7 @@ void test_utf8_rune_len(CuTest *tc) {
 }
 
 void test_utf8_encode(CuTest *tc) {
-    byte buf[5];
+    uint8_t buf[5];
     char str[5];
     size_t size;
 
