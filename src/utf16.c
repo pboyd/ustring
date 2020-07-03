@@ -111,3 +111,13 @@ size_t utf16_encode(uint8_t *buf, enum byte_order byte_order, uint32_t r) {
     write_word(&buf[2], byte_order, LOW_SURROGATE | (r & 0x3ff));
     return 4;
 }
+
+enum byte_order utf16_decode_bom(uint8_t *buf) {
+    if (buf[0] == 0xff && buf[1] == 0xfe) {
+        return little_endian;
+    }
+    if (buf[0] == 0xfe && buf[1] == 0xff) {
+        return big_endian;
+    }
+    return -1;
+}

@@ -6,6 +6,17 @@
 
 #define copy_string(dest, str, len) for (int i = 0; i < len; i++) dest[i] = str[i]
 
+void test_utf16_decode_bom(CuTest *tc) {
+    uint8_t buf[2];
+
+    copy_string(buf, "\xff\xfe", 2);
+    CuAssertIntEquals(tc, little_endian, utf16_decode_bom(buf));
+    copy_string(buf, "\xfe\xff", 2);
+    CuAssertIntEquals(tc, big_endian, utf16_decode_bom(buf));
+    copy_string(buf, "\x00\x00", 2);
+    CuAssertIntEquals(tc, -1, utf16_decode_bom(buf));
+}
+
 void test_utf16_decode(CuTest *tc) {
     uint32_t actual;
     size_t size;
@@ -93,6 +104,7 @@ void test_utf16_encode(CuTest *tc) {
 
 CuSuite* utf16_suite() {
     CuSuite* suite = CuSuiteNew();
+    SUITE_ADD_TEST(suite, test_utf16_decode_bom);
     SUITE_ADD_TEST(suite, test_utf16_decode);
     SUITE_ADD_TEST(suite, test_utf16_rune_len);
     SUITE_ADD_TEST(suite, test_utf16_encode);

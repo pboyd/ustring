@@ -53,6 +53,15 @@ size_t utf8_rune_len(uint32_t rune);
 size_t utf8_encode(uint8_t *buf, uint32_t rune);
 
 /**
+ * utf16_decode_bom looks at the beginning of a document for a byte order mark.
+ *
+ * If the buffer does not begin with a byte order mark then -1 is returned.
+ *
+ * \param buf the buffer to read from. It must contain two bytes.
+ */
+enum byte_order utf16_decode_bom(uint8_t *buf);
+
+/**
  * utf16_decode returns the value of the first UTF-16 code point in buf.
  *
  * utf16_decode will stop at the first invalid byte and return the Unicode
