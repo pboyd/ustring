@@ -52,6 +52,16 @@ uint32_t utf16_decode(uint8_t *buf,  enum byte_order byte_order, size_t *size) {
     return value;
 }
 
+int utf16_surrogate(uint8_t *buf, enum byte_order byte_order) {
+    uint32_t w = read_word(buf, byte_order);
+
+    if (IS_HIGH_SURROGATE(w) || IS_LOW_SURROGATE(w)) {
+        return 1;
+    }
+
+    return 0;
+}
+
 size_t utf16_rune_len(uint32_t r) {
     if (r > UNICODE_MAX) {
         return 0;

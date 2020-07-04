@@ -74,6 +74,17 @@ enum byte_order utf16_decode_bom(uint8_t *buf);
 uint32_t utf16_decode(uint8_t *buf, enum byte_order byte_order, size_t *size);
 
 /**
+ * utf16_surrogate returns 1 if the first bytes in the buffer are a UTF-16
+ * surrogate. In any other case, it returns 0, meaning that the first two bytes
+ * of the buffer represent a complete code point (though it may be invalid).
+ *
+ * \param buf pointer to the beginning of a UTF-16 byte string. Up to the first
+ * two bytes will be examined.
+ * \param byte_order either big_endian or little_endian
+ */
+int utf16_surrogate(uint8_t *buf, enum byte_order byte_order);
+
+/**
  * utf16_rune_len returns the number of bytes needed to store the rune in UTF-16.
  *
  * If the rune is not a valid Unicode code point value (i.e. less than zero or

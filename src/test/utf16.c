@@ -102,11 +102,31 @@ void test_utf16_encode(CuTest *tc) {
     CuAssertIntEquals(tc, 0, utf16_cmp(expected, buf, big_endian, 4));
 }
 
+void test_utf16_surrogate(CuTest *tc) {
+    uint8_t buf[2];
+
+    copy_string(buf, "\x00\x61", 2);
+    CuAssertIntEquals(tc, 0, utf16_surrogate(buf, big_endian));
+
+    copy_string(buf, "\x61\x00", 2);
+    CuAssertIntEquals(tc, 0, utf16_surrogate(buf, little_endian));
+
+    copy_string(buf, "\xd8\x3c", 2);
+    CuAssertIntEquals(tc, 1, utf16_surrogate(buf, big_endian));
+
+    copy_string(buf, "\x3c\xd8", 2);
+    CuAssertIntEquals(tc, 0, utf16_surrogate(buf, big_endian));
+
+    copy_string(buf, "\x3c\xd8", 2);
+    CuAssertIntEquals(tc, 1, utf16_surrogate(buf, little_endian));
+}
+
 CuSuite* utf16_suite() {
     CuSuite* suite = CuSuiteNew();
     SUITE_ADD_TEST(suite, test_utf16_decode_bom);
     SUITE_ADD_TEST(suite, test_utf16_decode);
     SUITE_ADD_TEST(suite, test_utf16_rune_len);
     SUITE_ADD_TEST(suite, test_utf16_encode);
+    SUITE_ADD_TEST(suite, test_utf16_surrogate);
     return suite;
 }
