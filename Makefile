@@ -1,6 +1,6 @@
 AR = ar
 CC = gcc
-CFLAGS = -Iinclude -O2 -Wall
+CFLAGS = -Iinclude -O2 -Wall -std=c11
 
 .PHONY: all clean test examples
 
